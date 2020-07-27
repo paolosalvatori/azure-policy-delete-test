@@ -1,0 +1,21 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "location": {
+      "value": "westeurope"
+    },
+    "resourceGroupName": {
+      "value": "PolicyTestRG"
+    },
+    "policyAssignmentName": {
+      "value": "delete-test-policy-assignment"
+    },
+    "policyDefinitionName": {
+      "value": "delete-test-policy-definition"
+    },
+    "policyScope": {
+      "value": "/subscriptions/1a45a694-ae23-4650-9774-89a571c462f6/resourceGroups/PolicyTestRG"
+    }
+  }
+}

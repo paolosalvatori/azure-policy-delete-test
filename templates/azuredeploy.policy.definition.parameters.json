@@ -1,0 +1,24 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "location": {
+      "value": "westeurope"
+    },
+    "policyName": {
+      "value": "delete-test-policy-definition"
+    },
+    "policyDisplayName": {
+      "value": "Resource Delete Test Policy"
+    },
+    "policyDescription": {
+      "value": "Creates a network security group in the same resource group of the storage account that triggered the policy evaluaton."
+    },
+    "storageAccountName": {
+      "value": "babofufos"
+    },
+    "nsgName": {
+      "value": "babofufos"
+    }
+  }
+}

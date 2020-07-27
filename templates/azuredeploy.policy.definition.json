@@ -1,0 +1,194 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "location": {
+      "type": "string",
+      "defaultValue": "westeurope",
+      "metadata": {
+        "description": "Specifies the deployment region for the Azure Policy."
+      }
+    },
+    "policyName": {
+      "type": "string",
+      "defaultValue": "delete-test-policy-definition",
+      "metadata": {
+        "description": "Specifies the name of the Azure Policy."
+      }
+    },
+    "policyDisplayName": {
+      "type": "string",
+      "defaultValue": "Resource Delete Test Policy",
+      "metadata": {
+        "description": "Specifies the display name of the Azure Policy."
+      }
+    },
+    "policyDescription": {
+      "type": "string",
+      "defaultValue": "Creates a network security group in the same resource group of the storage account that triggered the policy evaluaton.",
+      "metadata": {
+        "description": "Specifies the description of the Azure Policy."
+      }
+    },
+    "policyRoleDefinition": {
+      "type": "string",
+      "defaultValue": "[concat(subscription().id ,'/providers/microsoft.authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c')]",
+      "metadata": {
+        "description": "Specifies an array of strings that match role-based access control role ID accessible by the subscription."
+      }
+    },
+    "storageAccountName": {
+      "type": "string",
+      "defaultValue": "babofufos",
+      "metadata": {
+        "description": "Specifies the name of the Storage Account."
+      }
+    },
+    "nsgName": {
+      "type": "string",
+      "defaultValue": "babofufos",
+      "metadata": {
+        "description": "Specifies the name of the Network Security Group."
+      }
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Authorization/policyDefinitions",
+      "apiVersion": "2019-06-01",
+      "name": "[parameters('policyName')]",
+      "properties": {
+        "displayName": "[parameters('policyDisplayName')]",
+        "description": "[parameters('policyDescription')]",
+        "policyType": "Custom",
+        "metadata": {
+          "class": "Samples"
+        },
+        "mode": "All",
+        "parameters": {
+          "storageAccountName": {
+            "type": "string",
+            "defaultValue": "[parameters('storageAccountName')]",
+            "metadata": {
+              "displayName": "Storage Account Name",
+              "description": "Specifies the name of the Storage Account."
+            }
+          },
+          "nsgName": {
+            "type": "string",
+            "defaultValue": "[parameters('nsgName')]",
+            "metadata": {
+              "displayName": "Network Security Group Name",
+              "description": "Specifies the name of the Network Security Group."
+            }
+          },
+          "location": {
+            "type": "string",
+            "defaultValue": "[parameters('location')]",
+            "metadata": {
+              "displayName": "Location",
+              "description": "Specifies the location of the Network Security Group.",
+              "strongType": "location"
+            }
+          }
+        },
+        "policyRule": {
+          "if": {
+            "allOf": [
+              {
+                "field": "type",
+                "equals": "Microsoft.Storage/storageAccounts"
+              },
+              {
+                "field": "name",
+                "equals": "[[parameters('storageAccountName')]"
+              }
+            ]
+          },
+          "then": {
+            "effect": "deployIfNotExists",
+            "details": {
+              "type": "Microsoft.Network/networkSecurityGroups",
+              "roleDefinitionIds": [
+                "[parameters('policyRoleDefinition')]"
+              ],
+              "existenceScope": "resourcegroup",
+              "existenceCondition": {
+                "allOf": [
+                  {
+                    "field": "type",
+                    "equals": "Microsoft.Network/networkSecurityGroups"
+                  },
+                  {
+                    "field": "name",
+                    "equals": "[[parameters('nsgName')]"
+                  }
+                ]
+              },
+              "deploymentScope": "resourcegroup",
+              "deployment": {
+                "properties": {
+                  "mode": "incremental",
+                  "parameters": {
+                    "nsgName": {
+                      "value": "[[parameters('nsgName')]"
+                    },
+                    "location": {
+                      "value": "[[parameters('location')]"
+                    }
+                  },
+                  "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {
+                      "nsgName": {
+                        "type": "string",
+                        "metadata": {
+                          "description": "Specifies the name of the Network Security Group."
+                        }
+                      },
+                      "location": {
+                        "type": "string",
+                        "metadata": {
+                          "description": "Specifies the location of the Network Security Group."
+                        }
+                      }
+                    },
+                    "resources": [
+                      {
+                        "apiVersion": "2019-08-01",
+                        "type": "Microsoft.Network/networkSecurityGroups",
+                        "name": "[[parameters('nsgName')]",
+                        "location": "[[parameters('location')]",
+                        "tags": {
+                          "built-by": "AzurePolicy"
+                        },
+                        "properties": {
+                          "securityRules": [
+                            {
+                              "name": "AllowSshInbound",
+                              "properties": {
+                                "priority": 100,
+                                "access": "Allow",
+                                "direction": "Inbound",
+                                "destinationPortRange": "22",
+                                "protocol": "Tcp",
+                                "sourceAddressPrefix": "*",
+                                "sourcePortRange": "*",
+                                "destinationAddressPrefix": "*"
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}
