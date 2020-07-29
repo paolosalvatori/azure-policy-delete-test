@@ -5,9 +5,6 @@
     "location": {
       "value": "westeurope"
     },
-    "resourceGroupName": {
-      "value": "PolicyTestRG"
-    },
     "policyAssignmentName": {
       "value": "delete-test-policy-assignment"
     },

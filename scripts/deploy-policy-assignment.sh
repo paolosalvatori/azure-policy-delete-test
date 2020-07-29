@@ -34,7 +34,6 @@ az deployment group create \
     --template-file $template \
     --parameters $parameters \
     --parameters policyDefinitionName=$policyDefinitionName \
-                 resourceGroupName=$resourceGroupName \
                  policyAssignmentName=$policyAssignmentName \
                  policyScope=$policyScope \
     --only-show-errors
